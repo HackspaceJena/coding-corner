@@ -74,7 +74,7 @@ let primeNumbers;
 
 // print(Array.from(function* () { for (let x of primeNumbers()) { if (x > 50) return; yield x; } }()));
 
-let limit = 5e7;
+const limit = 5e7;
 
 function* pnPower(exp) {
     for (let e of primeNumbers()) {

@@ -48,7 +48,7 @@ Array.prototype.cross = function (other, op) {
 // print([1, 2].cross([3, 4], (a, b) => a + b));
 
 let primeNumbers = [2,3,5,7,11,13,17,19];
-let limit = 5e7;
+const limit = 5e7;
 
 for (let num = primeNumbers[primeNumbers.length - 1] + 2;
      num <= Math.sqrt(limit); num += 2) {
