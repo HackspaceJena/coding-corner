@@ -6,11 +6,14 @@ CFLAGS=-g -O2 -fPIC -fPIE -Wall -Wextra -Wformat=2 -Wunused -Wlogical-op -Wundef
 
 LDFLAGS=-lm
 
+RFLAGS=-O -g
+
 .PHONY: all
 
-all: jo-so_euler87 jo-so_euler87_rust
+all: jo-so_euler87-c jo-so_euler87-rust
 
-jo-so_euler87:
+%-rust: %.rs
+	rustc $(RFLAGS) --crate-type bin -o $@ $^
 
-jo-so_euler87_rust: jo-so_euler87.rs
-	rustc -O -g -o $@ $<
+%-c: %.c
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
