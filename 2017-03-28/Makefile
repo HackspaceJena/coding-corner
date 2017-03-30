@@ -8,6 +8,9 @@ LDFLAGS=-lm
 
 .PHONY: all
 
-all: jo-so_euler87
+all: jo-so_euler87 jo-so_euler87_rust
 
 jo-so_euler87:
+
+jo-so_euler87_rust: jo-so_euler87.rs
+	rustc -O -g -o $@ $<
