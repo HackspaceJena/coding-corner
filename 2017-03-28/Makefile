@@ -9,3 +9,5 @@ LDFLAGS=-lm
 .PHONY: all
 
 all: jo-so_euler87
+
+jo-so_euler87:

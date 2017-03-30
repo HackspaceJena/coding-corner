@@ -1,8 +1,56 @@
+/*
+  Copyright © 2017 Jörg Sommer <joerg@alea.gnuu.de>
+
+  License: MIT https://opensource.org/licenses/MIT
+ */
+
+//////
+//
+// Solution of Euler 87 https://projecteuler.net/problem=87
+//
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-static int cmp_uint(const void* p1, const void* p2)
+int gen_prime_numbers(uint limit, uint* pn, uint** pn_end)
+{
+    pn[0] = 2u;
+    pn[1] = 3u;
+    uint* next_pn = &pn[2];
+
+    for (uint num = *(next_pn - 1) + 2; num <= limit; num += 2)
+    {
+        for (uint i = (uint)sqrt(num); i >= 3; --i)
+        {
+            if (num % i == 0)
+                goto next;
+        }
+        if (next_pn >= *pn_end)
+            return -1;
+
+        *next_pn++ = num;
+    next:
+        ;
+    }
+
+    *pn_end = next_pn;
+    return 0;
+}
+
+typedef struct {
+    uint* begin;
+    uint* end;
+    uint* mem_end;
+} vector_uint;
+
+void vector_init(vector_uint* vec)
+{
+    vec->begin = NULL;
+    vec->end = NULL;
+    vec->mem_end = NULL;
+}
+
+int cmp_uint(const void* p1, const void* p2)
 {
     const uint a = *(const uint*)p1;
     const uint b = *(const uint*)p2;
@@ -13,59 +61,60 @@ static int cmp_uint(const void* p1, const void* p2)
     return 1;
 }
 
+int vector_add(vector_uint* vec, uint el)
+{
+    if (vec->end >= vec->mem_end)
+    {
+        uint old_size = (uint)(vec->mem_end - vec->begin);
+        size_t new_size = old_size * sizeof(*vec->begin) + (1 << 20);
+        vec->begin = realloc(vec->begin, new_size);
+        if (vec->begin == NULL)
+            return -1;
+
+        vec->mem_end = vec->begin + new_size / sizeof(*vec->begin);
+        vec->end = &vec->begin[old_size];
+    }
+
+    *vec->end++ = el;
+    return 0;
+}
+
 int main(void)
 {
     const uint LIMIT = 50000000;
+
     uint* const prime_numbers = malloc(4096);
     if (prime_numbers == NULL)
     {
         perror("Failed to allocate memory for prime numbers");
         return EXIT_FAILURE;
     }
-    uint* const prime_numbers_end = prime_numbers + 4096 / sizeof(*prime_numbers);
 
-    uint max_pn = (uint)sqrt(LIMIT);
-    prime_numbers[0] = 2u;
-    prime_numbers[1] = 3u;
-    uint* next_pn = &prime_numbers[2];
+    uint* prime_numbers_end = prime_numbers + 4096 / sizeof(*prime_numbers);
 
-    for (uint num = *(next_pn - 1) + 2; num <= max_pn; num += 2)
+    if (gen_prime_numbers((uint)sqrt(LIMIT), prime_numbers, &prime_numbers_end) != 0)
     {
-        for (uint i = (uint)sqrt(num); i >= 3; --i)
-        {
-            if (num % i == 0)
-                goto next;
-        }
-        if (next_pn >= prime_numbers_end)
-        {
-            fprintf(stderr, "Memory for prime numbers exceeded, but more needed.\n");
-            return EXIT_FAILURE;
-        }
-
-        *next_pn++ = num;
-    next:
-        ;
+        fprintf(stderr, "Memory for prime numbers exceeded, but more needed.\n");
+        return EXIT_FAILURE;
     }
 
-    printf("There are %ld numbers below sqrt(50.000.000)\n", next_pn - prime_numbers);
+    printf("There are %ld numbers below sqrt(50.000.000)\n",
+      prime_numbers_end - prime_numbers);
 
-    uint* nums = NULL;
-    uint* nums_end = nums;
-    uint* next_num = nums;
+    vector_uint nums;
+    vector_init(&nums);
 
-    for (uint* pn2 = prime_numbers; pn2 < next_pn; ++pn2)
+    for (uint* pn2 = prime_numbers; pn2 < prime_numbers_end; ++pn2)
     {
         uint pow2 = *pn2 * *pn2;
 
-        for (uint* pn3 = prime_numbers; pn3 < next_pn; ++pn3)
+        for (uint* pn3 = prime_numbers; pn3 < prime_numbers_end; ++pn3)
         {
-            uint pow3 = *pn3 * *pn3 * *pn3;
-
-            uint sum = pow2 + pow3;
+            uint sum = pow2 + *pn3 * *pn3 * *pn3;
             if (sum >= LIMIT)
                 break;
 
-            for (uint* pn4 = prime_numbers; pn4 < next_pn; ++pn4)
+            for (uint* pn4 = prime_numbers; pn4 < prime_numbers_end; ++pn4)
             {
                 uint pow4 = *pn4 * *pn4;
                 pow4 *= pow4;
@@ -74,31 +123,19 @@ int main(void)
                 if (sum2 >= LIMIT)
                     break;
 
-                if (next_num >= nums_end)
+                if (vector_add(&nums, sum2) != 0)
                 {
-                    long next_num_idx = next_num - nums;
-                    size_t new_size = (uint)(nums_end - nums) * sizeof(*nums) + (1 << 20);
-                    nums = realloc(nums, new_size);
-                    if (nums == NULL)
-                    {
-                        perror("Failed to increase memory for result numbers");
-                        return EXIT_FAILURE;
-                    }
-
-                    nums_end = nums + new_size / sizeof(*nums);
-                    next_num = &nums[next_num_idx];
+                    perror("Failed to increase memory for result numbers");
+                    return EXIT_FAILURE;
                 }
-
-                *next_num++ = sum2;
             }
         }
     }
-    nums_end = next_num;
 
-    qsort(nums, (size_t)(nums_end - nums), sizeof(*nums), cmp_uint);
+    qsort(nums.begin, (size_t)(nums.end - nums.begin), sizeof(*nums.begin), cmp_uint);
 
     uint count = 1;
-    for (const uint* n = nums + 1; n < nums_end; ++n)
+    for (const uint* n = nums.begin + 1; n < nums.end; ++n)
         if (*(n - 1) != *n)
             ++count;
 
