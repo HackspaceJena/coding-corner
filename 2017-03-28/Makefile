@@ -2,7 +2,8 @@
 
 CFLAGS=-g -O2 -fPIC -fPIE -Wall -Wextra -Wformat=2 -Wunused -Wlogical-op -Wundef \
 	-Wswitch-enum -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings \
-	-Wconversion -D_FORTIFY_SOURCE=2 -fstack-protector -Wshadow -Wnested-externs
+	-Wconversion -D_FORTIFY_SOURCE=2 -fstack-protector -Wshadow -Wnested-externs \
+	-Wmissing-prototypes
 
 LDFLAGS=-lm
 

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int gen_prime_numbers(uint limit, uint* pn, uint** pn_end)
+static int gen_prime_numbers(uint limit, uint* pn, uint** pn_end)
 {
     pn[0] = 2u;
     pn[1] = 3u;
@@ -43,14 +43,14 @@ typedef struct {
     uint* mem_end;
 } vector_uint;
 
-void vector_init(vector_uint* vec)
+static void vector_init(vector_uint* vec)
 {
     vec->begin = NULL;
     vec->end = NULL;
     vec->mem_end = NULL;
 }
 
-int cmp_uint(const void* p1, const void* p2)
+static int cmp_uint(const void* p1, const void* p2)
 {
     const uint a = *(const uint*)p1;
     const uint b = *(const uint*)p2;
@@ -61,7 +61,7 @@ int cmp_uint(const void* p1, const void* p2)
     return 1;
 }
 
-int vector_add(vector_uint* vec, uint el)
+static int vector_add(vector_uint* vec, uint el)
 {
     if (vec->end >= vec->mem_end)
     {
