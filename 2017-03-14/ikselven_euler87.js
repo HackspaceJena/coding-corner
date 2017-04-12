@@ -1,4 +1,4 @@
-#!/usr/bin/js24
+#!/usr/bin/js
 
 function isPrime(num) {
     if (num === 3) {
@@ -31,10 +31,18 @@ print("found "+primes.length+" prime numbers");
 let sumSet = new Set();
 for(let index4=0; index4 < primes.length; index4++) {
     let fourth = primes[index4] * primes[index4] * primes[index4] * primes[index4];
+    if (fourth > MAX) {
+        break;
+    }
+
     for(let index3=0; index3 < primes.length; index3++) {
-        let cube = primes[index3] * primes[index3] * primes[index3];
+        let cube = fourth + primes[index3] * primes[index3] * primes[index3];
+        if (cube > MAX) {
+            break;
+        }
+
         for(let index2=0; index2 < primes.length; index2++) {
-            let sum = fourth + cube + primes[index2] * primes[index2];
+            let sum = cube + primes[index2] * primes[index2];
             if (sum >= MAX) {
                 break;
             }
