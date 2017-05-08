@@ -1,9 +1,14 @@
+#!/usr/bin/Rscript
+
+# Falls das Paket numbers nicht installiert ist:
+# 1. R_LIBS=$PWD/r-libs R -e "install.packages('numbers', dependencies=TRUE, repos='http://cran.r-project.org')"
+# 2. R_LIBS=$PWD/r-libs ./pikatech_euler87.R
 library(numbers)
 
 ####
 #    limit: Obere Grenze für die Summe der Primzahltripel
 #
-#    Gibt die Anzahl der einmaligen Primzahltripel 
+#    Gibt die Anzahl der einmaligen Primzahltripel
 #    bis zu einer oberen Grenze zurück.
 ####
 euler87 <- function(limit) {
