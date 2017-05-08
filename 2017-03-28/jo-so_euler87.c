@@ -104,22 +104,24 @@ int main(void)
     vector_uint nums;
     vector_init(&nums);
 
-    for (uint* pn2 = prime_numbers; pn2 < prime_numbers_end; ++pn2)
+    for (uint* pn4 = prime_numbers; pn4 < prime_numbers_end; ++pn4)
     {
-        uint pow2 = *pn2 * *pn2;
+        uint pow4 = *pn4 * *pn4;
+        pow4 *= pow4;
+        if (pow4 >= LIMIT)
+            break;
 
         for (uint* pn3 = prime_numbers; pn3 < prime_numbers_end; ++pn3)
         {
-            uint sum = pow2 + *pn3 * *pn3 * *pn3;
+            uint sum = pow4 + *pn3 * *pn3 * *pn3;
             if (sum >= LIMIT)
                 break;
 
-            for (uint* pn4 = prime_numbers; pn4 < prime_numbers_end; ++pn4)
+            for (uint* pn2 = prime_numbers; pn2 < prime_numbers_end; ++pn2)
             {
-                uint pow4 = *pn4 * *pn4;
-                pow4 *= pow4;
+                uint pow2 = *pn2 * *pn2;
 
-                uint sum2 = sum + pow4;
+                uint sum2 = sum + pow2;
                 if (sum2 >= LIMIT)
                     break;
 

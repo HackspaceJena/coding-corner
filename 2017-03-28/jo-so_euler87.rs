@@ -35,17 +35,20 @@ fn main() {
 
     let mut nums = Vec::new();
 
-    for pn2 in pn.iter() {
-        let pow2 = pn2.pow(2);
+    for pn4 in pn.iter() {
+        let pow4 = pn4.pow(4);
+        if pow4 >= LIMIT {
+            break;
+        }
 
         for pn3 in pn.iter() {
-            let sum = pow2 + pn3.pow(3);
+            let sum = pow4 + pn3.pow(3);
             if sum >= LIMIT {
                 break;
             }
 
-            for pn4 in pn.iter() {
-                let sum2 = sum + pn4.pow(4);
+            for pn2 in pn.iter() {
+                let sum2 = sum + pn2.pow(2);
                 if sum2 >= LIMIT {
                     break;
                 }
